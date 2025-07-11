@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>MPIN Strength Checker</title>
+  <style>
+    body { font-family: Arial; padding: 20px; background-color: #f4f4f4; }
+    label { display: block; margin-top: 10px; }
+    input[type="text"], input[type="date"] { width: 200px; padding: 5px; }
+    button { margin-top: 15px; padding: 8px 15px; }
+    #result { margin-top: 20px; padding: 10px; background: #fff; border-radius: 5px; }
+  </style>
+</head>
+<body>
+<!-- have used simple UI to take user input, spare me! I'm not so good at webDev-->  
+<h2>MPIN Strength Checker</h2>
+
+  <label for="mpin">Enter your MPIN (4 or 6 digits):</label>
+  <input type="text" id="mpin" maxlength="6" pattern="\d{4,6}" required>
+
+  <label for="dob">Your Date of Birth:</label>
+  <input type="date" id="dob">
+
+  <label for="spouseDob">Spouse's DOB:</label>
+  <input type="date" id="spouseDob">
+
+  <label for="anniversary">Anniversary:</label>
+  <input type="date" id="anniversary">
+
+  <button onclick="checkMPIN()">Check Strength</button>
+
+  <div id="result"></div>
+
+  <script>
+    // Set of known common MPINs (partial list, can be extended)
+    const COMMON_MPINS = new Set([
+      "0000", "1111", "2222", "3333", "4444", "5555", "6666",
+      "7777", "8888", "9999", "1234", "4321", "1212", "1122",
+      "1004", "2000", "2580", "123456", "654321", "000000",
+      "111111", "222222", "333333", "121212", "112233", "123123", "999999"
+    ]);
+
+    // Formats a Date object into DDMMYYYY
+    function formatDateToDDMMYYYY(dateStr) {
+      if (!dateStr) return "";
+      const d = new Date(dateStr);
+      const dd = String(d.getDate()).padStart(2, "0");
+      const mm = String(d.getMonth() + 1).padStart(2, "0");
+      const yyyy = d.getFullYear();
+      return `${dd}${mm}${yyyy}`;
+    }
+
+    // Generates possible PIN-like variants from a full date (DDMMYYYY)
+    function generateVariants(dateStr) {
+      if (!dateStr || dateStr.length !== 8) return [];
+      const dd = dateStr.slice(0, 2);
+      const mm = dateStr.slice(2, 4);
+      const yyyy = dateStr.slice(4);
+      const yy = yyyy.slice(2);
+
+      return [
+        dd + mm, mm + dd,
+        yy + mm, mm + yy,
+        dd + yy, yy + dd,
+        dd + mm + yy,
+        yy + mm + dd,
+        mm + dd + yy,
+        mm + yy + dd
+      ];
+    }
+
+    // Checks strength of entered MPIN and updates the result box
+    function checkMPIN() {
+      const pin = document.getElementById("mpin").value.trim();
+      const dob = formatDateToDDMMYYYY(document.getElementById("dob").value);
+      const spouseDob = formatDateToDDMMYYYY(document.getElementById("spouseDob").value);
+      const anniversary = formatDateToDDMMYYYY(document.getElementById("anniversary").value);
+
+      let reasons = [];
+
+      if (COMMON_MPINS.has(pin)) reasons.push("COMMONLY_USED");
+      if (generateVariants(dob).includes(pin)) reasons.push("DEMOGRAPHIC_DOB_SELF");
+      if (generateVariants(spouseDob).includes(pin)) reasons.push("DEMOGRAPHIC_DOB_SPOUSE");
+      if (generateVariants(anniversary).includes(pin)) reasons.push("DEMOGRAPHIC_ANNIVERSARY");
+
+      const strength = reasons.length ? "WEAK" : "STRONG";
+
+      let output = `<strong>Strength:</strong> ${strength}`;
+      if (reasons.length) {
+        output += `<br><strong>Reasons:</strong><ul>`;
+        reasons.forEach(r => {
+          output += `<li>${r}</li>`;
+        });
+        output += `</ul>`;
+      }
+
+      document.getElementById("result").innerHTML = output;
+    }
+  </script>
+</body>
+</html>
