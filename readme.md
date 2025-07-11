@@ -12,13 +12,13 @@ A simple Python + HTML-based tool to evaluate the strength of a mobile banking M
 - Simple HTML UI for quick testing
 
 📁 Files included:
-- part_A.py → Checks if MPIN is common
-- part_B.py → Adds DOB/anniversary matching
-- part_C.py → Returns reasons for weakness
-- mpin_checker.py → Final combined logic (Parts A to D)
-- test_mpin.py → Validates with multiple test cases
-- UI_format_mpin_cheker.html → Interactive form for browser
-- README.md → You're reading it 🙂
+- `part_A.py` – code to check commonly used  PIN
+- `part_B.py` – code to enhance above code for checking user demographic info  
+- `part_C.py` – this code returns reasons for weakness (e.g. DOB match, common PIN, etc.)  
+- `part_D.py` - this is the same code implimented for 6 digit mpins
+- `mpin_checker.py` – final combined version with all parts (A to D) for both 4,6 digit MPINS
+- `test_mpin.py` – includes 20+ test cases to verify the logic  
+- `UI_format_mpin_cheker.html` – simple web-based interface to try out the checker
 
 📌 Created as part of a data science assignment for OneBanc.
 
